@@ -1,64 +1,83 @@
-# Le Jeu du Haricot Magique
+# 🌱 Le Jeu du Haricot Magique
 
-Un jeu web 3D inspiré du célèbre jeu du temple ("Temple Run") réalisé avec Babylon.js. Dans ce jeu, le joueur contrôle un personnage qui court sur un haricot géant tout en évitant des obstacles.
+Un jeu web 3D inspiré du célèbre **SpeedX 3D**, réalisé avec **Babylon.js**. Dans ce jeu, le joueur contrôle un personnage qui court sur un haricot magique géant tout en évitant ses épines.
 
-![Capture d'écran du jeu](assets/favicon-32x32.png)
+---
 
-## Description
+## 👥 Membres
 
-Dans "Le Jeu du Haricot Magique", vous incarnez un personnage qui doit courir le plus loin possible sur un haricot magique géant. Votre objectif est de parcourir la plus grande distance possible sans heurter les épines qui bordent le haricot.
+- [Martin BARAS](https://github.com/LywenBG)
+- [Alexis BARAS](https://github.com/Askenet)
+- [Maëlla BOUACIDA](https://github.com/maellabcd)
+- [Valentin CARPENTIER](https://github.com/Frosperino)
 
-Le jeu présente les caractéristiques suivantes :
-- Environnement 3D généré procéduralement à l'infini
-- Système de score avec sauvegarde des records
-- Contrôles intuitifs (gauche/droite)
-- Difficulté progressive avec augmentation de la vitesse et du nombre d'obstacles
-- Effets sonores et musique d'ambiance
+---
 
-## Comment jouer
+## 🎮 Description
 
-### Contrôles
-- **Flèche Gauche** ou **Q** : Tourner à gauche
-- **Flèche Droite** ou **D** : Tourner à droite
-- **Échap** : Mettre le jeu en pause
-- **Espace** ou **Entrée** : Reprendre le jeu ou redémarrer après un game over
+Dans *Le Jeu du Haricot Magique*, vous incarnez un personnage qui tente de courir le plus loin possible sur un haricot géant suspendu dans les airs. Le but : **éviter les épines** et battre votre propre record de distance !
+
+### ✨ Fonctionnalités
+
+- 🌍 Environnement 3D généré procéduralement à l’infini  
+- 🏅 Système de score avec sauvegarde automatique des records  
+- 🕹️ Contrôles simples et intuitifs (gauche/droite)  
+- 📈 Difficulté progressive (plus rapide, plus d’obstacles)  
+- 🎵 Effets sonores et musique d’ambiance  
+
+---
+
+## 🕹️ Comment jouer
+
+### 🎛️ Contrôles
+
+- ⬅️ ou **Q** : Tourner à gauche  
+- ➡️ ou **D** : Tourner à droite  
+- ⎋ (Échap) : Mettre le jeu en pause  
+- **Espace** ou **Entrée** : Reprendre le jeu ou redémarrer après un *game over*  
 - **I** : Afficher l'inspecteur Babylon.js (mode développeur)
 
-## Technologies utilisées
+---
 
-- **Babylon.js** : Moteur de rendu 3D WebGL
-- **JavaScript (ES6+)** : Logique du jeu
-- **HTML5/CSS3** : Structure et style
-- **LocalStorage** : Sauvegarde des records
+## 🛠️ Technologies utilisées
 
-## Structure du projet
+- 🔷 **Babylon.js** : Moteur de rendu 3D WebGL  
+- 💻 **JavaScript (ES6+)** : Logique du jeu  
+- 🌐 **HTML5/CSS3** : Structure et style de la page  
+- 💾 **LocalStorage** : Sauvegarde locale des scores  
+
+---
+
+## 🗂️ Structure du projet
 
 ```
 /
-├── index.html        # Page principale du jeu
-├── style.css         # Styles CSS
-├── js/               # Scripts JavaScript
-│   ├── main.js       # Point d'entrée
-│   ├── game.js       # Classe principale du jeu
-│   ├── config.js     # Configuration et paramètres
-│   ├── beanManager.js # Gestion du haricot et obstacles
-│   └── playerController.js # Contrôle du joueur
-├── assets/           # Ressources 3D
-│   ├── bean.glb      # Modèle 3D du haricot
-│   ├── trump.glb     # Modèle 3D du personnage
-│   └── favicon-32x32.png # Icône du jeu
-└── audio/            # Ressources audio
+├── index.html               # Page principale du jeu
+├── style.css                # Styles CSS
+├── js/                      # Scripts JavaScript
+│   ├── main.js              # Point d'entrée
+│   ├── game.js              # Classe principale du jeu
+│   ├── config.js            # Configuration et paramètres
+│   ├── beanManager.js       # Gestion du haricot et des obstacles
+│   └── playerController.js  # Contrôle du joueur
+├── assets/                  # Ressources 3D
+│   ├── bean.glb             # Modèle 3D du haricot
+│   ├── trump.glb            # Modèle 3D du personnage
+│   └── favicon-32x32.png    # Icône du jeu
+└── audio/                   # Ressources audio
     ├── trump-funny-remix.mp3 # Musique de fond
-    └── game-over.mp3 # Son de fin de partie
+    └── game-over.mp3        # Son de fin de partie
 ```
 
-## Installation et lancement
+---
 
-1. Clonez ou téléchargez ce dépôt
-2. Ouvrez le fichier `index.html` dans votre navigateur web moderne
-   - Pour une expérience optimale, utilisez un serveur web local
+## 🚀 Installation et lancement
 
-Vous pouvez également utiliser un serveur local simple avec Python :
+1. Clonez ou téléchargez ce dépôt  
+2. Ouvrez le fichier `index.html` dans un navigateur moderne
+
+💡 Pour une expérience optimale, utilisez un serveur local :
+
 ```bash
 # Python 3
 python -m http.server
@@ -67,16 +86,20 @@ python -m http.server
 python -m SimpleHTTPServer
 ```
 
-## Crédits
+---
 
-- Développé avec [Babylon.js](https://www.babylonjs.com/)
-- Modèles 3D et assets audio créés spécifiquement pour ce projet
-- Modèle Haricot généré avec meshyAI
-- Modèle Trump récupéré depuis sketchfab
-- Animation pour le modèle Trump récupéré depuis mixamo
+## 🙌 Crédits
 
-## Licence
+- Développé avec [Babylon.js](https://www.babylonjs.com/)  
+- Modèles 3D et sons créés spécifiquement pour ce projet  
+- Haricot généré via [Meshy AI](https://www.meshy.ai/)  
+- Modèle Trump depuis [Sketchfab](https://sketchfab.com/)  
+- Animation via [Mixamo](https://www.mixamo.com/)  
 
-Ce projet est disponible sous licence libre pour une utilisation éducative. 
+---
+
+## 📄 Licence
+
+Ce projet est disponible sous licence libre pour une utilisation éducative. 🌱
 
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/tcwhlYLU)
