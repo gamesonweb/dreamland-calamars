@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Jeu du Haricot Magique - Babylon.js</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="assets/favicon-32x32.png" type="image/png">
+    
+    <!-- BabylonJS -->
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+    <script src="https://cdn.babylonjs.com/inspector/babylon.inspector.bundle.js"></script>
+    
+    <!-- Modules du jeu -->
+    <script src="js/config.js" type="module"></script>
+    <script src="js/game.js" type="module"></script>
+    <script src="js/beanManager.js" type="module"></script>
+    <script src="js/playerController.js" type="module"></script>
+    <script src="js/main.js" type="module"></script>
+</head>
+<body>
+    <canvas id="renderCanvas" tabindex="0"></canvas>
+    <div id="scoreContainer">
+        <h3>Distance</h3>
+        <p class="current-score">0 m</p>
+        <p>Record: <span class="record-score">0 m</span></p>
+    </div>
+
+    <!-- Menu pause -->
+    <div id="pauseMenu" class="hidden">
+        <div class="pause-content">
+            <h2>PAUSE</h2>
+            <button id="resumeBtn">Reprendre</button>
+            <p class="pause-tip">Appuyez sur ESPACE ou ENTRÉE pour reprendre</p>
+        </div>
+    </div>
+    
+    <!-- Menu game over -->
+    <div id="gameOverMenu" class="hidden">
+        <div class="gameover-content">
+            <h2>GAME OVER</h2>
+            <div class="score-summary">
+                <p>Distance parcourue:</p>
+                <p class="final-score">0 m</p>
+                <p class="record-info">Record: <span class="final-record">0 m</span></p>
+                <p class="new-record hidden">Nouveau record !</p>
+            </div>
+            <button id="restartBtn">Recommencer</button>
+            <p class="gameover-tip">Appuyez sur ESPACE ou ENTRÉE pour recommencer</p>
+        </div>
+    </div>
+</body>
+</html>
