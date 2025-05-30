@@ -9,7 +9,6 @@ export class Game {
         this.worldNode = null;
         this.beanManager = null;
         this.backgroundMusic = null;
-        this.isPaused = false;
         this.isGameOver = false;
         this.playerController = null;
         this.canvas = canvas;
@@ -43,9 +42,6 @@ export class Game {
         
         // Configuration de l'éclairage
         this.setupLights();
-
-        // Configuration du menu pause
-        this.setupPauseMenu();
         
         // Configuration du menu game over
         this.setupGameOverMenu();
@@ -55,12 +51,24 @@ export class Game {
 
     // INITIALISATION DE LA MUSIQUE EN ATTENTE DE CLIC (LES NAVIGATEURS ONT UNE SECURIT)
     async initializeAudio() {
+        // Vérifier si c'est un appareil mobile
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
+        // Ne pas initialiser la musique sur mobile
+        if (isMobile) return;
+        
+        // Créer une nouvelle instance de l'audio
         this.backgroundMusic = new Audio("./audio/trump-funny-remix.mp3");
         this.backgroundMusic.loop = true;
         this.backgroundMusic.volume = 0.3;
 
         // Jouer la musique au premier clic n'importe où sur la page
         const playOnFirstInteraction = () => {
+            // S'assurer que la musique n'est pas déjà en cours de lecture
+            if (this.backgroundMusic) {
+                this.backgroundMusic.pause();
+                this.backgroundMusic.currentTime = 0;
+            }
             this.playBackgroundMusic();
             document.removeEventListener('click', playOnFirstInteraction);
             document.removeEventListener('keydown', playOnFirstInteraction);
@@ -71,34 +79,31 @@ export class Game {
     }
 
     playBackgroundMusic() {
+        // Ne pas jouer la musique sur mobile
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) return;
+
         if (this.backgroundMusic && this.backgroundMusic.paused) {
-            this.backgroundMusic.play().catch(error => {
-                console.warn("Impossible de lancer la musique:", error);
-            });
+            // S'assurer que la musique est bien arrêtée avant de la relancer
+            this.backgroundMusic.pause();
+            this.backgroundMusic.currentTime = 0;
+            
+            const playPromise = this.backgroundMusic.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    console.warn("Impossible de lancer la musique:", error);
+                });
+            }
         }
     }
 
     pauseBackgroundMusic() {
+        // Ne pas gérer la musique sur mobile
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) return;
+
         if (this.backgroundMusic && !this.backgroundMusic.paused) {
             this.backgroundMusic.pause();
+            this.backgroundMusic.currentTime = 0;
         }
-    }
-
-    setupPauseMenu() {
-        const pauseMenu = document.getElementById('pauseMenu');
-        const resumeBtn = document.getElementById('resumeBtn');
-
-        // Gestionnaire de clic sur le bouton Reprendre
-        resumeBtn.addEventListener('click', () => {
-            this.resumeGame();
-        });
-
-        // Gestionnaire d'appui sur Espace ou Entrée pour reprendre
-        document.addEventListener('keydown', (event) => {
-            if ((event.code === 'Space' || event.code === 'Enter') && this.isPaused) {
-                this.resumeGame();
-            }
-        });
     }
 
     setupGameOverMenu() {
@@ -154,7 +159,6 @@ export class Game {
         
         // Réinitialiser les états
         this.isGameOver = false;
-        this.isPaused = false;
         
         // Arrêter complètement et libérer la musique actuelle
         if (this.backgroundMusic) {
@@ -174,46 +178,14 @@ export class Game {
         // Réinitialiser toute la configuration
         await this.initialize();
         
+        // Activer l'invincibilité temporaire après le redémarrage
+        if (this.playerController) {
+            this.playerController.activateInvincibility(1500); // 1.5 secondes d'invincibilité
+        }
+        
         // Focus sur le canvas
         if (this.canvas) {
             this.canvas.focus();
-        }
-    }
-
-    pauseGame() {
-        if (this.isPaused || this.isGameOver) return;
-
-        this.isPaused = true;
-        this.engine.stopRenderLoop();
-        this.pauseBackgroundMusic();
-        
-        // Afficher le menu pause
-        const pauseMenu = document.getElementById('pauseMenu');
-        pauseMenu.classList.remove('hidden');
-    }
-
-    resumeGame() {
-        if (!this.isPaused || this.isGameOver) return;
-
-        this.isPaused = false;
-        
-        // Cacher le menu pause
-        const pauseMenu = document.getElementById('pauseMenu');
-        pauseMenu.classList.add('hidden');
-        
-        // Reprendre le rendu et la musique
-        this.playBackgroundMusic();
-        this.run();
-        
-        // Restaurer le focus sur le canvas pour les contrôles clavier
-        const canvas = document.getElementById('renderCanvas');
-        if (canvas) {
-            canvas.focus();
-            
-            // Réinitialiser l'état des touches si elles étaient enfoncées avant la pause
-            if (this.playerController) {
-                this.playerController.resetKeyStates();
-            }
         }
     }
 
@@ -226,10 +198,6 @@ export class Game {
     }
 
     run() {
-        // Définir une limite de 60 FPS
-        this.engine.setHardwareScalingLevel(1);
-        this.engine.limitFPS = 60;
-        
         this.engine.runRenderLoop(() => {
             this.scene.render();
         });

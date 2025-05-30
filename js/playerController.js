@@ -35,44 +35,14 @@ export class PlayerController {
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         
         if (!isMobile) {
-            const instructionsDiv = document.createElement('div');
-            instructionsDiv.id = 'gameInstructions';
-            instructionsDiv.style.cssText = `
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background-color: rgba(0, 0, 0, 0.8);
-                color: white;
-                padding: 20px;
-                border-radius: 10px;
-                text-align: center;
-                font-family: Arial, sans-serif;
-                z-index: 1000;
-                transition: opacity 0.5s ease-in-out;
-            `;
+            const instructionsDiv = document.getElementById('gameInstructions');
             
-            instructionsDiv.innerHTML = `
-                <h3 style="margin: 0 0 15px 0;">Contrôles</h3>
-                <p style="margin: 5px 0;">
-                    <span style="color: #4CAF50;">Q</span> ou 
-                    <span style="color: #4CAF50;">A</span> ou 
-                    <span style="color: #4CAF50;">←</span> : Tourner à gauche
-                </p>
-                <p style="margin: 5px 0;">
-                    <span style="color: #4CAF50;">D</span> ou 
-                    <span style="color: #4CAF50;">→</span> : Tourner à droite
-                </p>
-            `;
-            
-            document.body.appendChild(instructionsDiv);
+            // Afficher les instructions
+            instructionsDiv.classList.remove('hidden');
             
             // Faire disparaître les instructions après 5 secondes
             setTimeout(() => {
-                instructionsDiv.style.opacity = '0';
-                setTimeout(() => {
-                    instructionsDiv.remove();
-                }, 500);
+                instructionsDiv.classList.add('hidden');
             }, 5000);
         }
     }
@@ -242,6 +212,35 @@ export class PlayerController {
             this.touchLeft = false;
             this.touchRight = false;
         });
+
+        // Détecter les changements de visibilité de la page
+        this.setupVisibilityChangeDetection();
+    }
+
+    // Détecter les changements de visibilité de la page
+    setupVisibilityChangeDetection() {
+        // Variable pour suivre si le jeu a commencé
+        let gameStarted = false;
+
+        // Fonction pour gérer le changement de visibilité
+        const handleVisibilityChange = () => {
+            // Si le document n'est plus visible, que le jeu a commencé et que le jeu n'est pas déjà en game over
+            if (document.hidden && gameStarted && this.game && !this.game.isGameOver) {
+                // Déclencher un game over
+                this.handleThornCollision();
+            }
+        };
+
+        // Marquer le jeu comme commencé après un court délai
+        setTimeout(() => {
+            gameStarted = true;
+        }, 1000);
+
+        // Écouter les changements de visibilité
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+
+        // Écouter quand la fenêtre perd le focus
+        window.addEventListener('blur', handleVisibilityChange);
     }
 
     setupRenderLoop(worldNode, playerCameraNode) {
@@ -303,6 +302,8 @@ export class PlayerController {
     handleThornCollision() {
         // Ne rien faire si le joueur est au début du jeu (problème de collision, il n'y a pas d'épines au début)
         if(this.playerPositionZ <= 0.50) return;
+        // Ne rien faire si le joueur est au début du jeu (problème de collision, il n'y a pas d'épines au début)
+        if(this.playerPositionZ <= 0.50) return;
         
         // Vérifier si on a battu le record
         const currentDistance = Math.floor(this.distance);
@@ -324,20 +325,29 @@ export class PlayerController {
     // Jouer un son quand on perd
     playGameOverSound() {
         try {
-            // Stocker la référence au son dans une variable statique de la classe
-            if (!PlayerController.gameOverSound) {
-                PlayerController.gameOverSound = new Audio("./audio/game-over.mp3");
-                PlayerController.gameOverSound.volume = 0.5;
-            } else {
-                // Réinitialiser le son s'il est déjà créé
+            // Si le son existe déjà, on l'arrête et on le réinitialise
+            if (PlayerController.gameOverSound) {
                 PlayerController.gameOverSound.pause();
                 PlayerController.gameOverSound.currentTime = 0;
+            } else {
+                // Créer une nouvelle instance du son si elle n'existe pas
+                PlayerController.gameOverSound = new Audio("./audio/game-over.mp3");
+                PlayerController.gameOverSound.volume = 0.5;
             }
             
+            // S'assurer que le son est bien arrêté avant de le relancer
+            PlayerController.gameOverSound.pause();
+            PlayerController.gameOverSound.currentTime = 0;
+            
             // Jouer le son
-            PlayerController.gameOverSound.play().catch(error => {
-                console.warn("Impossible de jouer le son de game over:", error);
-            });
+            const playPromise = PlayerController.gameOverSound.play();
+            
+            // Gérer les erreurs de lecture
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    console.warn("Impossible de jouer le son de game over:", error);
+                });
+            }
         } catch (error) {
             console.warn("Erreur lors de la lecture du son:", error);
         }
