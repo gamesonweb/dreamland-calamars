@@ -2,6 +2,8 @@
 
 Un jeu web 3D inspiré du célèbre **SpeedX 3D**, réalisé avec **Babylon.js**. Dans ce jeu, le joueur contrôle un personnage qui court sur un haricot magique géant tout en évitant ses épines.
 
+🎮 Jouer maintenant : [Le Jeu du Haricot Magique](https://dreamland-calamars.github.io/dreamland-calamars/)
+
 ---
 
 ## 👥 Membres
@@ -19,11 +21,12 @@ Dans *Le Jeu du Haricot Magique*, vous incarnez un personnage qui tente de couri
 
 ### ✨ Fonctionnalités
 
-- 🌍 Environnement 3D généré procéduralement à l’infini  
+- 🌍 Environnement 3D généré procéduralement à l'infini  
 - 🏅 Système de score avec sauvegarde automatique des records  
 - 🕹️ Contrôles simples et intuitifs (gauche/droite)  
-- 📈 Difficulté progressive (plus rapide, plus d’obstacles)  
-- 🎵 Effets sonores et musique d’ambiance  
+- 📱 Compatible avec les appareils tactiles et les claviers QWERTY/AZERTY
+- 📈 Difficulté progressive (plus rapide, plus d'obstacles)  
+- 🎵 Effets sonores et musique d'ambiance  
 
 ---
 
@@ -31,11 +34,14 @@ Dans *Le Jeu du Haricot Magique*, vous incarnez un personnage qui tente de couri
 
 ### 🎛️ Contrôles
 
-- ⬅️ ou **Q** : Tourner à gauche  
+#### Sur PC
+- ⬅️ ou **Q** ou **A** : Tourner à gauche  
 - ➡️ ou **D** : Tourner à droite  
-- ⎋ (Échap) : Mettre le jeu en pause  
-- **Espace** ou **Entrée** : Reprendre le jeu ou redémarrer après un *game over*  
-- **I** : Afficher l'inspecteur Babylon.js (mode développeur)
+- **Espace** ou **Entrée** : Redémarrer après un *game over*  
+
+#### Sur Mobile
+- Toucher la moitié gauche de l'écran : Tourner à gauche
+- Toucher la moitié droite de l'écran : Tourner à droite
 
 ---
 
@@ -85,6 +91,8 @@ python -m http.server
 # Python 2
 python -m SimpleHTTPServer
 ```
+
+Ou jouez directement en ligne : [Le Jeu du Haricot Magique](https://dreamland-calamars.github.io/dreamland-calamars/)
 
 ---
 

@@ -5,7 +5,7 @@ export const CONFIG = {
     CAMERA_HEIGHT: 8,
     CAMERA_ANGLE: Math.PI / 6,
     ROTATION_SPEED: 0.02,
-    MOVEMENT_SPEED: 0.15, 
+    MOVEMENT_SPEED: 0.20, 
     MAX_MOVEMENT_SPEED: 0.60,
     SPEED_INCREMENT: 0.06,
     BEAN_SEGMENTS: 2,     // Nombre initial de segments (maintenant 2)

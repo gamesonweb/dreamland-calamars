@@ -20,6 +20,61 @@ export class PlayerController {
         this.record = this.loadRecord();
         this.currentScoreElement = null;
         this.recordScoreElement = null;
+
+        // Variables pour les contrôles tactiles
+        this.touchLeft = false;
+        this.touchRight = false;
+
+        // Créer l'élément d'instructions
+        this.createInstructionsElement();
+    }
+
+    // Créer et afficher l'élément d'instructions
+    createInstructionsElement() {
+        // Vérifier si c'est un appareil mobile
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
+        if (!isMobile) {
+            const instructionsDiv = document.createElement('div');
+            instructionsDiv.id = 'gameInstructions';
+            instructionsDiv.style.cssText = `
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background-color: rgba(0, 0, 0, 0.8);
+                color: white;
+                padding: 20px;
+                border-radius: 10px;
+                text-align: center;
+                font-family: Arial, sans-serif;
+                z-index: 1000;
+                transition: opacity 0.5s ease-in-out;
+            `;
+            
+            instructionsDiv.innerHTML = `
+                <h3 style="margin: 0 0 15px 0;">Contrôles</h3>
+                <p style="margin: 5px 0;">
+                    <span style="color: #4CAF50;">Q</span> ou 
+                    <span style="color: #4CAF50;">A</span> ou 
+                    <span style="color: #4CAF50;">←</span> : Tourner à gauche
+                </p>
+                <p style="margin: 5px 0;">
+                    <span style="color: #4CAF50;">D</span> ou 
+                    <span style="color: #4CAF50;">→</span> : Tourner à droite
+                </p>
+            `;
+            
+            document.body.appendChild(instructionsDiv);
+            
+            // Faire disparaître les instructions après 5 secondes
+            setTimeout(() => {
+                instructionsDiv.style.opacity = '0';
+                setTimeout(() => {
+                    instructionsDiv.remove();
+                }, 500);
+            }, 5000);
+        }
     }
 
     // Charger le record depuis le localStorage
@@ -125,11 +180,13 @@ export class PlayerController {
     }
 
     setupControls() {
+        // Contrôles clavier
         this.scene.onKeyboardObservable.add((kbInfo) => {
             switch (kbInfo.type) {
                 case BABYLON.KeyboardEventTypes.KEYDOWN:
                     switch (kbInfo.event.key.toLowerCase()) {
                         case 'q':
+                        case 'a':
                         case 'arrowleft':
                             this.keyLeft = true;
                             break;
@@ -137,23 +194,12 @@ export class PlayerController {
                         case 'arrowright':
                             this.keyRight = true;
                             break;
-                        case 'escape':
-                            if (this.game) {
-                                if (this.game.isPaused) {
-                                    this.game.resumeGame();
-                                } else {
-                                    this.game.pauseGame();
-                                }
-                            }
-                            break;
-                        case 'i':
-                            this.scene.debugLayer.show();
-                            break;
                     }
                     break;
                 case BABYLON.KeyboardEventTypes.KEYUP:
                     switch (kbInfo.event.key.toLowerCase()) {
                         case 'q':
+                        case 'a':
                         case 'arrowleft':
                             this.keyLeft = false;
                             break;
@@ -164,6 +210,37 @@ export class PlayerController {
                     }
                     break;
             }
+        });
+
+        // Contrôles tactiles
+        const canvas = this.scene.getEngine().getRenderingCanvas();
+        
+        canvas.addEventListener('touchstart', (event) => {
+            event.preventDefault();
+            const touch = event.touches[0];
+            const touchX = touch.clientX;
+            const screenWidth = canvas.clientWidth;
+            
+            // Si le toucher est sur la moitié gauche de l'écran
+            if (touchX < screenWidth / 2) {
+                this.touchLeft = true;
+                this.touchRight = false;
+            } else {
+                this.touchLeft = false;
+                this.touchRight = true;
+            }
+        });
+
+        canvas.addEventListener('touchend', (event) => {
+            event.preventDefault();
+            this.touchLeft = false;
+            this.touchRight = false;
+        });
+
+        canvas.addEventListener('touchcancel', (event) => {
+            event.preventDefault();
+            this.touchLeft = false;
+            this.touchRight = false;
         });
     }
 
@@ -176,19 +253,29 @@ export class PlayerController {
             return 0;
         };
         
+        let lastFrameTime = performance.now();
+        
         this.scene.onBeforeRenderObservable.add(() => {
-            // Ne pas mettre à jour si le jeu est en pause ou game over
-            if (this.game && (this.game.isPaused || this.game.isGameOver)) return;
+            // Ne pas mettre à jour si le jeu est en game over
+            if (this.game && this.game.isGameOver) return;
 
-            // Gestion du mouvement de rotation
-            if (this.keyLeft) this.angle -= CONFIG.ROTATION_SPEED;
-            else if (this.keyRight) this.angle += CONFIG.ROTATION_SPEED;
+            // Calculer le delta time
+            const currentTime = performance.now();
+            const deltaTime = (currentTime - lastFrameTime) / 1000;
+            lastFrameTime = currentTime;
+
+            // Normaliser la vitesse en fonction du framerate (60 FPS comme référence)
+            const normalizedSpeed = this.speed * (deltaTime * 60);
+
+            // Gestion du mouvement de rotation (clavier ou tactile)
+            if (this.keyLeft || this.touchLeft) this.angle -= CONFIG.ROTATION_SPEED * (deltaTime * 60);
+            else if (this.keyRight || this.touchRight) this.angle += CONFIG.ROTATION_SPEED * (deltaTime * 60);
 
             worldNode.rotation.z = this.angle;
             playerCameraNode.rotation.z = -this.angle;
             
-            // Avancer le joueur
-            this.playerPositionZ += this.speed;
+            // Avancer le joueur avec la vitesse normalisée
+            this.playerPositionZ += normalizedSpeed;
             playerCameraNode.position.z = this.playerPositionZ;
             
             // Mettre à jour la distance parcourue
@@ -204,9 +291,7 @@ export class PlayerController {
             // Détection de collision avec les épines
             for (let mesh of this.scene.meshes) {
                 if (!mesh.name.startsWith("thorn_")) continue;
-                // false = bounding box, true = test précis si tu as besoin
                 if (mesh.intersectsMesh(this.playerMesh, true)) {
-                    // Gérer la collision
                     this.handleThornCollision();
                     break;
                 }
