@@ -49,44 +49,25 @@ export class Game {
         this.run();
     }
 
-    // INITIALISATION DE LA MUSIQUE EN ATTENTE DE CLIC (LES NAVIGATEURS ONT UNE SECURIT)
+    // INITIALISATION DE LA MUSIQUE
     async initializeAudio() {
-        // Vérifier si c'est un appareil mobile
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        
-        // Ne pas initialiser la musique sur mobile
-        if (isMobile) return;
-        
         // Créer une nouvelle instance de l'audio
         this.backgroundMusic = new Audio("./audio/trump-funny-remix.mp3");
         this.backgroundMusic.loop = true;
         this.backgroundMusic.volume = 0.3;
 
-        // Jouer la musique au premier clic n'importe où sur la page
-        const playOnFirstInteraction = () => {
-            // S'assurer que la musique n'est pas déjà en cours de lecture
-            if (this.backgroundMusic) {
-                this.backgroundMusic.pause();
-                this.backgroundMusic.currentTime = 0;
-            }
+        // Attendre que la page soit complètement chargée
+        if (document.readyState === 'complete') {
             this.playBackgroundMusic();
-            document.removeEventListener('click', playOnFirstInteraction);
-            document.removeEventListener('keydown', playOnFirstInteraction);
-        };
-        
-        document.addEventListener('click', playOnFirstInteraction);
-        document.addEventListener('keydown', playOnFirstInteraction);
+        } else {
+            window.addEventListener('load', () => {
+                this.playBackgroundMusic();
+            });
+        }
     }
 
     playBackgroundMusic() {
-        // Ne pas jouer la musique sur mobile
-        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) return;
-
         if (this.backgroundMusic && this.backgroundMusic.paused) {
-            // S'assurer que la musique est bien arrêtée avant de la relancer
-            this.backgroundMusic.pause();
-            this.backgroundMusic.currentTime = 0;
-            
             const playPromise = this.backgroundMusic.play();
             if (playPromise !== undefined) {
                 playPromise.catch(error => {
@@ -97,12 +78,8 @@ export class Game {
     }
 
     pauseBackgroundMusic() {
-        // Ne pas gérer la musique sur mobile
-        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) return;
-
         if (this.backgroundMusic && !this.backgroundMusic.paused) {
             this.backgroundMusic.pause();
-            this.backgroundMusic.currentTime = 0;
         }
     }
 
@@ -128,7 +105,12 @@ export class Game {
 
         this.isGameOver = true;
         this.engine.stopRenderLoop();
-        this.pauseBackgroundMusic();
+        
+        // Arrêter la musique
+        if (this.backgroundMusic) {
+            this.backgroundMusic.pause();
+            this.backgroundMusic.currentTime = 0;
+        }
         
         // Mettre à jour l'affichage du score final
         const finalScoreElement = document.querySelector('.final-score');
@@ -159,17 +141,6 @@ export class Game {
         
         // Réinitialiser les états
         this.isGameOver = false;
-        
-        // Arrêter complètement et libérer la musique actuelle
-        if (this.backgroundMusic) {
-            this.backgroundMusic.pause();
-            this.backgroundMusic.currentTime = 0;
-            
-            // Créer une nouvelle instance de l'audio
-            this.backgroundMusic = new Audio("./audio/trump-funny-remix.mp3");
-            this.backgroundMusic.loop = true;
-            this.backgroundMusic.volume = 0.3;
-        }
         
         // Créer une nouvelle scène
         this.scene.dispose();
