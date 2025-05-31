@@ -194,17 +194,27 @@ export class PlayerController {
             // Si le toucher est sur la moitié gauche de l'écran
             if (touchX < screenWidth / 2) {
                 this.touchLeft = true;
-                this.touchRight = false;
+                this.touchRight = false; // Désactiver la droite si la gauche est activée
             } else {
-                this.touchLeft = false;
-                this.touchRight = true;
+                // Ne pas activer la droite si la gauche est déjà active
+                if (!this.touchLeft) {
+                    this.touchRight = true;
+                }
             }
         });
 
         canvas.addEventListener('touchend', (event) => {
             event.preventDefault();
-            this.touchLeft = false;
-            this.touchRight = false;
+            // Trouver quel toucher a été relâché
+            const touch = event.changedTouches[0];
+            const touchX = touch.clientX;
+            const screenWidth = canvas.clientWidth;
+            
+            if (touchX < screenWidth / 2) {
+                this.touchLeft = false;
+            } else {
+                this.touchRight = false;
+            }
         });
 
         canvas.addEventListener('touchcancel', (event) => {

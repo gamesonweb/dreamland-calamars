@@ -56,30 +56,32 @@ export class Game {
         this.backgroundMusic.loop = true;
         this.backgroundMusic.volume = 0.3;
 
-        // Attendre que la page soit complètement chargée
-        if (document.readyState === 'complete') {
-            this.playBackgroundMusic();
-        } else {
-            window.addEventListener('load', () => {
-                this.playBackgroundMusic();
-            });
-        }
-    }
-
-    playBackgroundMusic() {
-        if (this.backgroundMusic && this.backgroundMusic.paused) {
-            const playPromise = this.backgroundMusic.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(error => {
-                    console.warn("Impossible de lancer la musique:", error);
-                });
+        // Fonction pour démarrer la musique
+        const startMusic = () => {
+            if (this.backgroundMusic && this.backgroundMusic.paused) {
+                const playPromise = this.backgroundMusic.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(error => {
+                        console.warn("Impossible de lancer la musique:", error);
+                    });
+                }
             }
-        }
-    }
+        };
 
-    pauseBackgroundMusic() {
-        if (this.backgroundMusic && !this.backgroundMusic.paused) {
-            this.backgroundMusic.pause();
+        // Essayer de démarrer la musique immédiatement
+        startMusic();
+
+        // Si la musique n'a pas démarré, attendre une interaction utilisateur
+        if (this.backgroundMusic.paused) {
+            const startOnInteraction = () => {
+                startMusic();
+                // Supprimer les écouteurs après la première interaction
+                document.removeEventListener('touchstart', startOnInteraction);
+                document.removeEventListener('click', startOnInteraction);
+            };
+
+            document.addEventListener('touchstart', startOnInteraction);
+            document.addEventListener('click', startOnInteraction);
         }
     }
 
