@@ -2,7 +2,9 @@
 
 Un jeu web 3D inspiré du célèbre **SpeedX 3D**, réalisé avec **Babylon.js**. Dans ce jeu, le joueur contrôle un personnage qui court sur un haricot magique géant tout en évitant ses épines.
 
-🎮 Jouer maintenant : [Le Jeu du Haricot Magique](https://haricot-magique.vercel.app/)
+🎮 Jouer maintenant : [Le Jeu du Haricot Magique](https://gamesonweb.github.io/dreamland-calamars/)
+
+📺 Voir le gameplay : [Vidéo YouTube](https://www.youtube.com/watch?v=uFZi3J0fiZc)
 
 ---
 
@@ -92,7 +94,7 @@ python -m http.server
 python -m SimpleHTTPServer
 ```
 
-Ou jouez directement en ligne : [Le Jeu du Haricot Magique](https://haricot-magique.vercel.app/)
+Ou jouez directement en ligne : [Le Jeu du Haricot Magique](https://gamesonweb.github.io/dreamland-calamars/)
 
 ---
 
